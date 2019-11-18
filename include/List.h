@@ -1,8 +1,62 @@
-#pragma once
+п»ї#pragma once
 #include <iterator>
+
 template <typename T>
 class List
 {
+private:
+	class Node
+	{
+	public:
+		Node* pNext;
+		T data;
+		Node(T& data, Node* pNext = nullptr) {
+			this->data = data;
+			this->pNext = pNext;
+		}
+	};
+
+public:
+
+	class iterator : public std::iterator<std::forward_iterator_tag, T> {
+	private:
+		Node* curr;
+	public:
+		iterator();
+		iterator(const iterator& b);
+		iterator(Node* b) {
+			curr = b;
+		}
+		iterator& operator=(const iterator& b) {
+			curr = b.curr;
+			return *this;
+		}
+		iterator& operator=(Node* b) {
+			curr = b;
+			return *this;
+		}
+		T& operator*() const;
+		Node* operator->() const {
+			return curr;
+		}
+		bool operator ==(const iterator& b) {
+			return curr == b.curr;
+		}
+		bool operator !=(const iterator& b) {
+			return curr != b.curr;
+		}
+		iterator operator++() {
+			curr = curr->pNext;
+			return *this;
+		}
+		iterator operator++(int a) {
+			List<T>::iterator tmp(*this);
+			curr = curr->pNext;
+			return tmp;
+		}
+
+	};
+
 public:
 	List();
 	List(int size);
@@ -19,56 +73,32 @@ public:
 	void insert(T& data, int index);
 	T& operator [](const int n);
 
-	T& reversed_ind (const int k) {
+	T& reversed_ind(const int k) {
 		if (k < 0 || k >= Size) throw k;
 		Node* nod = head;
 		Node* curr = head;
-		for(int i=0;i<=k;++i) curr = curr->pNext;
+		for (int i = 0; i <= k; ++i) curr = curr->pNext;
 		while (curr != nullptr) {
 			curr = curr->pNext;
 			nod = nod->pNext;
 		}
 		return nod->data;
-		//return operator[](Size - k - 1); //простой способ
+		//return operator[](Size - k - 1); //ГЇГ°Г®Г±ГІГ®Г© Г±ГЇГ®Г±Г®ГЎ
 	}
 
-	T& find_middle() {
-		if (head != nullptr) {
-			Node* mid = head;
-			Node* curr = head;
-			unsigned int count = 0, count2 = 0;
-			while (curr != nullptr) {
-				++count;
-				curr = curr->pNext;
-				if ((count >> 1) > count2) {
-					++count2;
-					mid = mid->pNext;
-				}
-			}
-			return mid->data;
-		}
-		//return operator[](Size/2); //простой способ
+	iterator begin() {
+		return start;
+	}
+	iterator end() {
+		return finish;
 	}
 
-	struct iterator :public std::iterator<std::forward_iterator_tag, T> {
-
-	};
 
 private:
-
-	class Node
-	{
-	public:
-		Node* pNext;
-		T data;
-		Node(T& data, Node* pNext = nullptr) {
-			this->data = data;
-			this->pNext = pNext;
-		}
-	};
-
 	int Size;
 	Node* head;
+	iterator start;
+	iterator finish = nullptr;
 };
 
 template <typename T>
@@ -100,8 +130,10 @@ List<T>::~List()
 template<typename T>
 void List<T>::push_back(T& data)
 {
-	if (head == nullptr)
+	if (head == nullptr) {
 		head = new Node(data);
+		start = head;
+	}
 	else {
 		Node* current = this->head;
 		while (current->pNext != nullptr)
@@ -115,6 +147,7 @@ template<typename T>
 void List<T>::push_front(T& data)
 {
 	head = new Node(data, head);
+	start = head;
 	++Size;
 }
 
@@ -123,6 +156,7 @@ void List<T>::pop_front()
 {
 	Node* current = this->head;
 	head = head->pNext;
+	++start;
 	delete current;
 	--Size;
 
@@ -180,4 +214,22 @@ T& List<T>::operator[](const int n)
 	for (int i = 0; i < n; i++)
 		current = current->pNext;
 	return current->data;
+}
+
+template<typename T>
+inline List<T>::iterator::iterator()
+{
+	curr = nullptr;
+}
+
+template<typename T>
+inline List<T>::iterator::iterator(const iterator& b)
+{
+	curr = b.curr;
+}
+
+template<typename T>
+inline T& List<T>::iterator::operator*() const
+{
+	return curr->data;
 }

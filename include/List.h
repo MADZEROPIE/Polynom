@@ -1,10 +1,11 @@
-﻿#pragma once
+#pragma once
 #include <iterator>
 
 template <typename T>
 class List
 {
 private:
+
 	class Node
 	{
 	public:
@@ -15,19 +16,17 @@ private:
 			this->pNext = pNext;
 		}
 	};
-
 public:
-
 	class iterator : public std::iterator<std::forward_iterator_tag, T> {
 	private:
 		Node* curr;
 	public:
 		iterator();
-		iterator(const iterator& b);
-		iterator(Node* b) {
+		iterator (const iterator& b);
+		iterator (Node* b) {
 			curr = b;
 		}
-		iterator& operator=(const iterator& b) {
+		iterator& operator= (const iterator& b) {
 			curr = b.curr;
 			return *this;
 		}
@@ -54,9 +53,9 @@ public:
 			curr = curr->pNext;
 			return tmp;
 		}
+		friend class List;
 
 	};
-
 public:
 	List();
 	List(int size);
@@ -70,29 +69,30 @@ public:
 	void clear();
 	void pop_back();
 	void removeAt(int index);
-	void insert(T& data, int index);
-	T& operator [](const int n);
-
-	T& reversed_ind(const int k) {
-		if (k < 0 || k >= Size) throw k;
-		Node* nod = head;
-		Node* curr = head;
-		for (int i = 0; i <= k; ++i) curr = curr->pNext;
-		while (curr != nullptr) {
-			curr = curr->pNext;
-			nod = nod->pNext;
-		}
-		return nod->data;
-		//return operator[](Size - k - 1); //ïðîñòîé ñïîñîá
+	void remove_after(List::iterator pr) {
+		if (pr == finish) return pop_front();
+		else if (pr.curr->pNext == nullptr) return;
+		Node* tmp = pr.curr->pNext->pNext;
+		delete pr.curr->pNext;
+		pr.curr->pNext = tmp;
+		--Size;
 	}
 
+	void insert(T& data, int index);
+	void insert_after(T& data, List::iterator pr) {
+		if (pr == finish) return push_front(data);
+		pr.curr->pNext = new Node(data, pr.curr->pNext);
+		++Size;
+	}
+	
+	T& operator [](const int n);
+	
 	iterator begin() {
 		return start;
 	}
 	iterator end() {
 		return finish;
 	}
-
 
 private:
 	int Size;

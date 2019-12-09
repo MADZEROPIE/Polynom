@@ -11,7 +11,7 @@ private:
 	public:
 		Node* pNext;
 		T data;
-		Node(T& data, Node* pNext = nullptr) {
+		Node(T data, Node* pNext = nullptr) {
 			this->data = data;
 			this->pNext = pNext;
 		}
@@ -59,12 +59,15 @@ public:
 public:
 	List();
 	List(int size);
+	List(const List& b) {
+		Node* tmp = b.head;
+	}
 	~List();
 	int GetSize() {
 		return Size;
 	};
-	void push_back(T& data);
-	void push_front(T& data);
+	void push_back(T data);
+	void push_front(T data);
 	void pop_front();
 	void clear();
 	void pop_back();
@@ -78,8 +81,8 @@ public:
 		--Size;
 	}
 
-	void insert(T& data, int index);
-	void insert_after(T& data, List::iterator pr) {
+	void insert(T data, int index);
+	void insert_after(T data, List::iterator pr) {
 		if (pr == finish) return push_front(data);
 		pr.curr->pNext = new Node(data, pr.curr->pNext);
 		++Size;
@@ -114,7 +117,7 @@ inline List<T>::List(int size)
 	if (size < 0) throw size;
 	head = nullptr;
 	for (int i = 0; i < size; ++i) {
-		head = new Node(i, head);
+		head = new Node(0, head);
 	}
 	Size = size;
 }
@@ -123,12 +126,11 @@ template <typename T>
 List<T>::~List()
 {
 	clear();
-
 }
 
 
 template<typename T>
-void List<T>::push_back(T& data)
+void List<T>::push_back(T data)
 {
 	if (head == nullptr) {
 		head = new Node(data);
@@ -144,7 +146,7 @@ void List<T>::push_back(T& data)
 }
 
 template<typename T>
-void List<T>::push_front(T& data)
+void List<T>::push_front(T data)
 {
 	head = new Node(data, head);
 	start = head;
@@ -193,7 +195,7 @@ void List<T>::removeAt(int index)
 }
 
 template<typename T>
-void List<T>::insert(T& data, int index)
+void List<T>::insert(T data, int index)
 {
 	if (!index)
 		push_front(data);

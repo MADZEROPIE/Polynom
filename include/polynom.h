@@ -16,10 +16,17 @@ public:
 	class Monom {
 	public:
 		real coef;
-		uint32_t pow_coef;
-		Monom(real _coef = 0.0, uint32_t _pow_coef = 0) {
+		int32_t pow_coef;
+
+
+		Monom(real _coef = 0.0, int32_t _pow_coef = -1) {
 			coef = _coef;
 			pow_coef = _pow_coef;
+		}
+
+		Monom( int a,int b, int c, real _coef = 0.0) {
+			coef = _coef;
+			pow_coef = a * maxp * maxp + b * maxp + c;
 		}
 
 		bool operator<(const Monom& b) {
@@ -37,7 +44,7 @@ public:
 		Monom operator-();
 		Monom operator+(const Monom& b);
 		Monom operator-(const Monom& b);
-		Monom operator*(const Monom& b);
+		Monom& operator*=(const Monom& b);
 
 		std::vector<int> get_deg();
 		int set_deg(int a, int b, int c);
@@ -66,6 +73,7 @@ public:
 		head = new Node;
 		head->pNext = head;
 	}
+
 	Polynom(std::string str);
 
 	Polynom(const Polynom& pol) {
@@ -73,14 +81,24 @@ public:
 		Node* p1 = head;
 		Node* p2 = pol.head->pNext;
 		while (p2 != pol.head) {
-			p1->pNext = new Node(p2->mon);
+			p1->pNext = new Node(p2->mon,head);
 			p2 = p2->pNext;
 			p1 = p1->pNext;
 		}
+		
 	}
 	~Polynom();
 
 	Polynom& operator=(const Polynom& pol) {
+		if(head==pol.head) return *this;
+		clear();
+		Node* p2 = pol.head->pNext;
+		Node* p1 = head;
+		while (p2 != pol.head) {
+			p1->pNext = new Node(p2->mon,head);
+			p2 = p2->pNext;
+			p1 = p1->pNext;
+		}
 		return *this;
 	}
 

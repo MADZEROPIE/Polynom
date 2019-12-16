@@ -1,7 +1,8 @@
 #include "polynom.h"
 
-Polynom::Polynom(std::string str)
+Polynom::Polynom(std::string str): Polynom()
 {
+
 }
 
 Polynom::~Polynom()
@@ -57,12 +58,23 @@ Polynom::Monom Polynom::Monom::operator+(const Monom& b)
 
 Polynom::Monom Polynom::Monom::operator-(const Monom& b)
 {
-	return Polynom::Monom();
+	if (b.pow_coef != pow_coef) throw b.pow_coef;
+	else {
+		Monom res(*this);
+		res.coef += b.coef;
+		return res;
+	}
 }
 
-Polynom::Monom Polynom::Monom::operator*(const Monom& b)
+Polynom::Monom& Polynom::Monom::operator*=(const Monom& b)
 {
-	return Polynom::Monom();
+	if (b.pow_coef % maxp + pow_coef % maxp >= maxp ||
+		b.pow_coef / maxp % maxp + pow_coef / maxp % maxp >= maxp ||
+		b.pow_coef / maxp / maxp % maxp + pow_coef / maxp / maxp % maxp >= maxp)
+			throw 1;
+	pow_coef += b.pow_coef;
+	coef*=b.coef;
+	return *this;
 }
 
 std::vector<int> Polynom::Monom::get_deg()

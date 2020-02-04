@@ -14,7 +14,7 @@ typedef double real;
 class Polynom{
 
 public:
-#pragma region Monom
+
 	class Monom {
 	public:
 		real coef;
@@ -52,7 +52,7 @@ public:
 
 		std::string ToString();
 	};
-#pragma endregion
+
 
 
 public:
@@ -98,7 +98,6 @@ public:
 	Polynom operator*(const real a);
 
 	Polynom& merge(Polynom& b);
-	Polynom Polynom::merge(std::vector<Polynom> a);
 	
 	
 	std::string ToString();

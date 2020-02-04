@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <sstream>
 
 typedef double real;
 
@@ -12,38 +14,37 @@ typedef double real;
 class Polynom{
 
 public:
-
+#pragma region Monom
 	class Monom {
 	public:
 		real coef;
 		int32_t pow_coef;
 
 
-		Monom(real _coef = 0.0, int32_t _pow_coef = -1) {
-			coef = _coef;
-			pow_coef = _pow_coef;
-		}
+		Monom(real _coef = 0.0, int32_t _pow_coef = -1);
 
-		Monom( int a,int b, int c, real _coef = 0.0) {
-			coef = _coef;
-			pow_coef = a * maxp * maxp + b * maxp + c;
-		}
+		Monom(int a, int b, int c, real _coef = 0.0);
 
-		bool operator<(const Monom& b) {
-			//if(pow_coef==b.pow_coef) return coef < b.coef;
-			return pow_coef < b.pow_coef; //Надо сравнивать только степени
-		}
+		Monom(std::string a);
 
-		bool operator==(const real a) {
-			return coef == a;
-		}
+		bool operator<(const Monom& b);
 
-		bool operator==(const Monom& b){
-			return pow_coef == b.pow_coef; //Надо сравнивать только степени
-		}
+		bool operator<=(const Monom& b);
+
+		bool operator==(const real a);
+
+		bool operator>(const real a);
+
+		bool operator<(const real a);
+
+		bool operator==(Polynom::Monom b);
+
 		Monom operator-();
+		Monom abs();
 		Monom operator+(const Monom& b);
+		Monom& operator+=(const Monom& b);
 		Monom operator-(const Monom& b);
+		Monom& operator-=(const Monom& b);
 		Monom& operator*=(const Monom& b);
 
 		std::vector<int> get_deg();
@@ -51,6 +52,8 @@ public:
 
 		std::string ToString();
 	};
+#pragma endregion
+
 
 public:
 	class Node
@@ -69,71 +72,38 @@ private:
 
 public:
 
-	Polynom() {
-		head = new Node;
-		head->pNext = head;
-	}
+	Polynom();
 
 	Polynom(std::string str);
 
-	Polynom(const Polynom& pol) {
-		head = new Node(pol.head->mon);
-		Node* p1 = head;
-		Node* p2 = pol.head->pNext;
-		while (p2 != pol.head) {
-			p1->pNext = new Node(p2->mon,head);
-			p2 = p2->pNext;
-			p1 = p1->pNext;
-		}
-		
-	}
+	Polynom(const Polynom& pol);
 	~Polynom();
 
-	Polynom& operator=(const Polynom& pol) {
-		if(head==pol.head) return *this;
-		clear();
-		Node* p2 = pol.head->pNext;
-		Node* p1 = head;
-		while (p2 != pol.head) {
-			p1->pNext = new Node(p2->mon,head);
-			p2 = p2->pNext;
-			p1 = p1->pNext;
-		}
-		return *this;
-	}
+	Polynom& operator=(const Polynom& pol);
 
-	Polynom operator+(const Polynom& pol) {
-		Polynom res(*this);
-		return res;
-	}
+	Polynom operator+(const Polynom& pol);
 
-	Polynom operator-() {
-		Polynom res(*this);
-		Node* tmp = res.head->pNext;
-		while (tmp != res.head) {
-			tmp->mon = - tmp->mon;
-		}
-		return res;
-	}
+	Polynom operator-();
 
-	Polynom operator-(const Polynom& pol) {
-		Polynom res(*this);
-		return res;
-	}
+	Polynom& operator+=(const Polynom& pol);
 
-	Polynom operator*(const Polynom& pol) {
-		Polynom res(*this);
-		return res;
-	}
+	Polynom& operator-=(Polynom& pol);
 
-	Polynom operator*(const real a) {
-		Polynom res(*this);
-		return res;
-	}
+	Polynom operator-(Polynom& pol);
+
+	Polynom operator*(Polynom::Monom& mon);
+
+	Polynom operator*(const Polynom& pol);
+
+	Polynom operator*(const real a);
+
+	Polynom& merge(Polynom& b);
+	Polynom Polynom::merge(std::vector<Polynom> a);
+	
 	
 	std::string ToString();
 
 	void clear();
 
-	void del_zeroes();
+	void del_zeros();
 };

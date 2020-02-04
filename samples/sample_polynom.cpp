@@ -5,9 +5,17 @@
 int main(int argc, char** argv)
 {
 	setlocale(LC_ALL, "Russian");
-	Polynom::Monom a(1, 185);
-	a.set_deg(1, 0, 0);
-
+	Polynom a;
+	Polynom b("10x3y4z5+5z1");
+	Polynom c("x3");
+	
+	a=b*c;
+	//b.clear();
+	//Polynom::Monom a,b;
+	
+	std::cout << a.ToString()<<'\n';//, "x2 - y2 + z2";
+	std::cout << c.ToString();// "y2";
+	
 	return 0;
 }
 

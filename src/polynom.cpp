@@ -8,55 +8,18 @@ Polynom::Polynom()
 
 Polynom::Polynom(std::string s)//Переписать
 {
-	{
-		std::stringstream ss;
-		ss << s;
-		std::string word, lastword = "+";
-		Monom data(-1, 0);
-		std::vector<Monom> v;
-		while (ss >> word)
-		{
-			if ((lastword == "+" || lastword == "-") && (word == "+" || word == "-") ||
-				(lastword != "+" && lastword != "-") && (word != "+" && word != "-"))
-			{
-				throw 1;
-			}
-			else
-			{
-				if (word != "+" && word != "-")
-				{
-					Monom a(word);
-					if (lastword == "-")
-					{
-						a = -a;
-					}
-					v.push_back(a);
-				}
-				lastword = word;
-			}
-		}
-		std::sort(v.rbegin(), v.rend());
-		head = new Node;
-		Node* p = head;
-		for (size_t i = 0; i < v.size(); ++i)
-		{
-			if (!(v[i] == p->mon))
-			{
-
-				Node* cur = new Node;
-				cur->mon = v[i];
-				p->pNext = cur;
-				p = p->pNext;
-			}
-			else
-			{
-				p->mon += v[i];
-			}
-
-		}
-		p->pNext = head;
-		del_zeros();
+	head = new Node;
+	Node* pNode = head;
+	for (; s.size(); ) {
+		int i = 1;
+		while (i < s.size() && s[i] != '+' && s[i] != '-' ) ++i;
+		std::string mon_str = s.substr(0, i);
+		Monom tmp(mon_str);
+		s.erase(0, i);
+		pNode->pNext = new Node(tmp,head);
+		pNode = pNode->pNext;
 	}
+
 }
 
 Polynom::Polynom(const Polynom& pol)
@@ -199,7 +162,7 @@ Polynom& Polynom::merge(Polynom& b)
 	head = head0;
 	p0->pNext = head;
 	b.head->pNext = b.head;
-	del_zeros();
+	del_zeros(); //Можно в этом же проходе проверять на 0, но мне лень
 	return *this;
 }
 

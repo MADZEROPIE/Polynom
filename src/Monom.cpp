@@ -12,53 +12,60 @@ Polynom::Monom::Monom(int a, int b, int c, real _coef)
 	pow_coef = a * maxp * maxp + b * maxp + c;
 }
 
-std::pair<int, std::string::iterator>  getFirstNumber(std::string::iterator a, std::string::iterator b) {
-	std::string s = "0123456789";
-	bool ok = false;
-	int k = 1;
-	for (; a != b && s.find(*a) != std::string::npos; ++a)
-	{
-		if (!ok)
-		{
-			ok = true;
-			k = 0;
-		}
-		k = 10 * k - '0' + *a;
-	}
-	if (!ok && a != b)
-		return std::pair<int, std::string::iterator>(k, a++);
-	return std::pair<int, std::string::iterator>(k, a);
+float getFloat(std::string s, size_t* i) { // Отвратительная гадость
+	if((s[*i]=='+' || s[*i]=='-')&& (*i+1)<s.size()&& (s[*i+1] >= '0' && s[*i+1] <= '9')
+		||(s[*i] >= '0' && s[*i]<='9')) 
+		return std::stof(s, i);
+	if (s[*i] == '-') { *i = *i + 1; return -1.0f; }
+	if(s[*i]=='+') *i = *i + 1;
+	return 1.0f;
+}
+
+int getInt(std::string s, size_t* j) {
+	int res=0;
+	int i = *j;
+	while (i < s.size() && s[i] >= '0' && s[i] <= '9') { res = res * 10 + s[i] - '0'; ++i; }
+	
+	if (i == *j) return 1;
+
+	*j = i;
+	return res;
 }
 
 Polynom::Monom::Monom(std::string s)
 {
 	int a = 0, b = 0, c = 0;
-	std::pair<int, std::string::iterator> pr = getFirstNumber(s.begin(), s.end());
-	coef = pr.first;
-	for (std::string::iterator it = pr.second; it != s.end();)
+	size_t i = 0;
+	coef = getFloat(s, &i);
+	coef = getFloat(s, &i);
+	s.erase(0, i);
+	for (i=0;i<s.size();)
 	{
-		if (*it == 'x' || *it == 'X')
+		if ((s[i] == 'x' || s[i] == 'X')&& !a)
 		{
-			std::pair<int, std::string::iterator> p = getFirstNumber(it + 1, s.end());
-			a += p.first;
-			it = p.second;
+			++i;
+			a = getInt(s, &i);
+			s.erase(0, i);
+			i = 0;
 		}
-		else if (*it == 'y' || *it == 'Y')
+		else if ((s[i] == 'y' || s[i] == 'Y') && !b)
 		{
-			std::pair<int, std::string::iterator> p = getFirstNumber(it + 1, s.end());
-			b += p.first;
-			it = p.second;
+			++i;
+			b += getInt(s, &i);
+			s.erase(0, i);
+			i = 0;
 		}
-		else if (*it == 'z' || *it == 'Z')
+		else if ((s[i] == 'z' || s[i] == 'Z') && !c)
 		{
-			std::pair<int, std::string::iterator> p = getFirstNumber(it + 1, s.end());
-			c += p.first;
-			it = p.second;
+			++i;
+			c += getInt(s, &i);
+			s.erase(0, i);
+			i = 0;
 		}
 		else
 			throw 1;
 	}
-	set_deg(a, b, c);
+	pow_coef = a * maxp * maxp + b * maxp + c;
 }
 
 bool Polynom::Monom::operator<(const Monom& b)

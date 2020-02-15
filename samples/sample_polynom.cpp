@@ -1,18 +1,21 @@
 #include <iostream>
-#include "tstack.h"
-#include "tqueue.h"
-#include "List.h"
+#include "polynom.h"
 
-
+using std::string;
 
 int main(int argc, char** argv)
 {
 	setlocale(LC_ALL, "Russian");
-	List<int> lis;
-	for (int i = 9; i >0; --i) lis.push_front(i);
-	cout<<lis.find_middle()<<endl; //5
-	cout << lis.reversed_ind(3) << endl; //6
-	cout << lis.reversed_ind(8); //1
+	Polynom a;
+	Polynom b("10x3y4z5+z");
+	Polynom c("x3");
+	std::cout << b.ToString() << '\n';
+	a=b*c;
+
+	std::cout << a.ToString()<<'\n';
+	std::cout << c.ToString();
+
+
 	return 0;
 }
 
